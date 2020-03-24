@@ -131,7 +131,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
 d3.csv("assets/data/data.csv").then(function(stateData, err) {
   if (err) throw err;
 
-  console.log(stateData);
+  // console.log(stateData);
 
   // cast the data from the csv as numbers
   stateData.forEach(function(data) {
@@ -204,6 +204,13 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
     .classed("inactive", true)
     .text("Age (Median)");
 
+  var xIncomeLabel = xLabelsGroup.append("text")
+    .attr("x", 0)
+    .attr("y", 60)
+    .attr("value", "income") // value to grab for event listener
+    .classed("inactive", true)
+    .text("Household Income (Median)");
+
   // append y axis
   chartGroup.append("text")
     .attr("transform", "rotate(-90)")
@@ -216,6 +223,65 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
   // updateToolTip function above csv import
   var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
 
+    // x axis labels event listener
+    xLabelsGroup.selectAll("text")
+    .on("click", function() {
+      // get value of selection
+      var value = d3.select(this).attr("value");
+      if (value !== chosenXAxis) {
+
+        // replaces chosenXAxis with value
+        chosenXAxis = value;
+
+        // console.log(chosenXAxis)
+
+        // functions here found above csv import
+        // updates x scale for new data
+        xLinearScale = xScale(stateData, chosenXAxis);
+
+        // updates x axis with transition
+        xAxis = renderAxes(xLinearScale, xAxis);
+
+        // updates circles with new x values
+        circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis);
+
+        // updates tooltips with new info
+        circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+
+        // changes classes to change bold text
+        if (chosenXAxis === "poverty") {
+          xPovertyLabel
+            .classed("active", true)
+            .classed("inactive", false);
+          xAgeLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          xIncomeLabel
+            .classed("active", false)
+            .classed("inactive", true);
+        } else if (chosenXAxis === "age") {
+          xPovertyLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          xAgeLabel
+            .classed("active", true)
+            .classed("inactive", false);
+          xIncomeLabel
+            .classed("active", false)
+            .classed("inactive", true);
+        } else {  // "income"
+          xPovertyLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          xAgeLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          xIncomeLabel
+            .classed("active", true)
+            .classed("inactive", false);
+        }
+      }
+    });
 
 }).catch(function(error) {
   console.log(error);
