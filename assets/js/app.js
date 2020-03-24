@@ -33,6 +33,11 @@
 //   .attr("height", height)
 //   .attr("class", "chart");
 
+// ToDo: 
+//  1. Add 2-letter state abbreviations as a label.
+//       See: https://stackoverflow.com/questions/13615381/d3-add-text-to-circle
+
+
 
 
 // From Hair app.js (D3-Day03-Activity 12)
@@ -180,11 +185,13 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
     .data(stateData)
     .enter()
     .append("circle")
+    .classed("stateCircle", true)  // Todo: move to a separate element grouped with circle.
+    .text(d => d.abbr)
     .attr("cx", d => xLinearScale(d[chosenXAxis]))
     .attr("cy", d => yLinearScale(d[chosenYAxis]))
     .attr("r", 15)
-    .attr("fill", "#89bdd3")  // Todo: Set this up in the .css file instead.
-    .attr("opacity", ".75");
+    // .attr("fill", "#89bdd3")  // Todo: Set this up in the .css file instead.
+    .attr("opacity", ".8");
 
   // Create group for  2 x- axis labels
   var xLabelsGroup = chartGroup.append("g")
