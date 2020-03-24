@@ -1,37 +1,41 @@
 // UCSD Data Science Bootcamp, HW16 D3
 // Alexis Perumal, 3/22/20
 
-// @TODO: YOUR CODE HERE!
-// var svgWidth = 1000;
-// var svgHeight = 500;
+// Old code:
+    // @TODO: YOUR CODE HERE!
+    // var svgWidth = 1000;
+    // var svgHeight = 500;
 
 
-// //From Kevin, 3/23/20 - START
+    // //From Kevin, 3/23/20 - START
 
-// // add before svg
-// // Grab the width of the containing box
-// var width = parseInt(d3.select("#scatter").style("width"));
-// // Designate the height of the graph
-// var height = width - width / 3.9;
-// // Margin spacing for graph
-// var margin = 20;
-// // space for placing words
-// var labelArea = 110;
-// // padding for the text at the bottom and left axes
-// var tPadBot = 40;
-// var tPadLeft = 40;
+    // // add before svg
+    // // Grab the width of the containing box
+    // var width = parseInt(d3.select("#scatter").style("width"));
+    // // Designate the height of the graph
+    // var height = width - width / 3.9;
+    // // Margin spacing for graph
+    // var margin = 20;
+    // // space for placing words
+    // var labelArea = 110;
+    // // padding for the text at the bottom and left axes
+    // var tPadBot = 40;
+    // var tPadLeft = 40;
 
-// //From Kevin, 3/23/20 - END
+    // //From Kevin, 3/23/20 - END
 
 
 
-// // create an SVG element
-// var svg = d3
-//   .select("#scatter")
-//   .append("svg")
-//   .attr("width", width)
-//   .attr("height", height)
-//   .attr("class", "chart");
+    // // create an SVG element
+    // var svg = d3
+    //   .select("#scatter")
+    //   .append("svg")
+    //   .attr("width", width)
+    //   .attr("height", height)
+    //   .attr("class", "chart")
+
+
+
 
 // ToDo: 
 //  1. Add 2-letter state abbreviations as a label.
@@ -41,8 +45,6 @@
 //  4. Add y-value to tool tip label
 //  5. Refactor code so there is less redundant code!
 //  6. Update readme
-
-
 
 
 // Derived from Hair app.js (D3-Day03-Activity 12)
@@ -83,8 +85,8 @@ var chosenYAxis = "obesity";  // other options: smokes, healthcare
 function xScale(xData, chosenXAxis) {
   // create scales
   var xLinearScale = d3.scaleLinear()
-    .domain([d3.min(xData, d => d[chosenXAxis]) * 0.8,
-      d3.max(xData, d => d[chosenXAxis]) * 1.2])
+    .domain([d3.min(xData, d => d[chosenXAxis]) * 0.9,
+      d3.max(xData, d => d[chosenXAxis]) * 1.1])
     .range([0, width]);
   return xLinearScale;
 }
@@ -93,9 +95,9 @@ function xScale(xData, chosenXAxis) {
 function yScale(yData, chosenYAxis) {
   // create scales
   var yLinearScale = d3.scaleLinear()
-    .domain([d3.min(yData, d => d[chosenYAxis]) * 0.8,
-      d3.max(yData, d => d[chosenYAxis]) * 1.2])
-    .range([0, height]);
+    .domain([d3.min(yData, d => d[chosenYAxis]) * 0.9,
+      d3.max(yData, d => d[chosenYAxis]) * 1.1])
+    .range([height, 0]);
   return yLinearScale;
 }
 
@@ -116,15 +118,6 @@ function renderYAxes(newScale, axis) {
     .call(baseAxis);
   return axis;
 }
-
-// // function used for updating circles group with a transition to
-// // new circles
-// function renderCircles(circlesGroup, newXScale, chosenXAxis) {
-//   circlesGroup.transition()
-//     .duration(1000)
-//     .attr("cx", d => newXScale(d[chosenXAxis]));
-//   return circlesGroup;
-// }
 
 // function used for updating circles group with a transition to
 // new circles
@@ -199,6 +192,7 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
   var xLinearScale = xScale(stateData, chosenXAxis);
   var yLinearScale = yScale(stateData, chosenYAxis);
 
+  // From Hair when there was just one y-axis option.
   // // Create y scale function
   // var yLinearScale = d3.scaleLinear()
   //   .domain([0, d3.max(stateData, d => d[chosenYAxis])])
@@ -235,7 +229,7 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
     .text(d => d.abbr)
     .attr("cx", d => xLinearScale(d[chosenXAxis]))
     .attr("cy", d => yLinearScale(d[chosenYAxis]))
-    .attr("r", 15)
+    .attr("r", 10)
     // .attr("fill", "#89bdd3")  // Todo: Set this up in the .css file instead.
     .attr("opacity", ".8");
 
