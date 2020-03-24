@@ -9,7 +9,8 @@ var svgHeight = 500;
 var svg = d3.select("#scatter")
   .append("svg")
   .attr("width", svgWidth)
-  .attr("height", svgHeight);
+  .attr("height", svgHeight)
+  .attr("class", "chart");
 
 // Load csv data
 d3.csv("assets/data/data.csv").then(function(stateData) {
