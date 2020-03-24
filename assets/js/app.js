@@ -2,14 +2,34 @@
 // Alexis Perumal, 3/22/20
 
 // @TODO: YOUR CODE HERE!
-var svgWidth = 1000;
-var svgHeight = 500;
+// var svgWidth = 1000;
+// var svgHeight = 500;
+
+
+//From Kevin, 3/23/20 - START
+
+// add before svg
+// Grab the width of the containing box
+var width = parseInt(d3.select("#scatter").style("width"));
+// Designate the height of the graph
+var height = width - width / 3.9;
+// Margin spacing for graph
+var margin = 20;
+// space for placing words
+var labelArea = 110;
+// padding for the text at the bottom and left axes
+var tPadBot = 40;
+var tPadLeft = 40;
+
+//From Kevin, 3/23/20 - END
+
+
 
 // create an SVG element
 var svg = d3.select("#scatter")
   .append("svg")
-  .attr("width", svgWidth)
-  .attr("height", svgHeight)
+  .attr("width", width)
+  .attr("height", height)
   .attr("class", "chart");
 
 // Load csv data
@@ -40,12 +60,12 @@ d3.csv("assets/data/data.csv").then(function(stateData) {
   // Create a scale for your independent (x) coordinates
   var xScale = d3.scaleLinear()
     .domain(d3.extent(stateData, d => d.id))
-    .range([0, svgWidth]);
+    .range([0, width]);
 
   // Create a scale for your dependent (y) coordinates
   var yScale = d3.scaleLinear()
     .domain([0, d3.max(stateData, d => d.poverty)])
-    .range([svgHeight, 0]);
+    .range([height, 0]);
 
   // create a line generator function and store as a variable
   // use the scale functions for x and y data
