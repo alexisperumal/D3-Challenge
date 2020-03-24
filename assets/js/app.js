@@ -45,7 +45,7 @@
 
 
 
-// From Hair app.js (D3-Day03-Activity 12)
+// Derived from Hair app.js (D3-Day03-Activity 12)
 var svgWidth = 960;
 var svgHeight = 500;
 
@@ -58,6 +58,9 @@ var margin = {
 
 var width = svgWidth - margin.left - margin.right;
 var height = svgHeight - margin.top - margin.bottom;
+
+// console.log('svgWidth: ', svgWidth, ', margin.left: ', margin.left, ', margin.right: ', margin.right, ', width: ', width);
+// console.log('svgHeight: ', svgHeight, ', margin.top: ', margin.top, ', margin.bottom: ', margin.bottom, ', height: ', height);
 
 // Create an SVG wrapper, append an SVG group that will hold our chart,
 // and shift the latter by left and top margins.
@@ -84,6 +87,16 @@ function xScale(xData, chosenXAxis) {
       d3.max(xData, d => d[chosenXAxis]) * 1.2])
     .range([0, width]);
   return xLinearScale;
+}
+
+// function used for updating y-scale var upon click on axis label
+function yScale(yData, chosenYAxis) {
+  // create scales
+  var yLinearScale = d3.scaleLinear()
+    .domain([d3.min(yData, d => d[chosenYAxis]) * 0.8,
+      d3.max(yData, d => d[chosenYAxis]) * 1.2])
+    .range([0, height]);
+  return yLinearScale;
 }
 
 // function used for updating xAxis var upon click on axis label
@@ -184,7 +197,7 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
 
   // xLinearScale function above csv import
   var xLinearScale = xScale(stateData, chosenXAxis);
-  var yLinearScale = xScale(stateData, chosenYAxis);
+  var yLinearScale = yScale(stateData, chosenYAxis);
 
   // // Create y scale function
   // var yLinearScale = d3.scaleLinear()
@@ -366,14 +379,14 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
 
       // replaces chosenXAxis with value
       chosenYAxis = value;
-      console.log('chosenYAxis', chosenYAxis)
-      console.log('chosenXAxis', chosenXAxis)
+      // console.log('chosenYAxis', chosenYAxis);
+      // console.log('chosenXAxis', chosenXAxis);
 
       // console.log(chosenXAxis)
 
       // functions here found above csv import
       // updates x scale for new data
-      yLinearScale = xScale(stateData, chosenYAxis);
+      yLinearScale = yScale(stateData, chosenYAxis);
 
       // updates y axis with transition
       yAxis = renderYAxes(yLinearScale, yAxis);
