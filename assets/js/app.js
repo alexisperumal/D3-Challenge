@@ -210,6 +210,10 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
  
 
   // append initial circles
+
+  // To debug issue with some state ID's not showing, see
+  // https://stackoverflow.com/questions/49882951/labels-for-circles-not-showing-up-in-d3-data-visualization
+
   var circlesGroup = chartGroup.selectAll("circle")
     .data(stateData)
     .enter()
