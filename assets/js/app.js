@@ -40,9 +40,12 @@
 // ToDo: 
 //  1. Add 2-letter state abbreviations as a label.
 //       See: https://stackoverflow.com/questions/13615381/d3-add-text-to-circle
-//  2. Fix y-axis label locations to be variable, not fixed.
-//  3. Fix the y-axis itself to be positioned correctly, with data plotted correctly.
+//  2. Fix y-axis label locations to be variable, not fixed. - DONE
+//  3. Fix the y-axis itself to be positioned correctly, with data plotted correctly. - DONE
+//  3a. Confirm calculatin for y-axis label location
 //  4. Add y-value to tool tip label
+//  4a. Fix tool tip bug where wrong data dimension is shown
+//  4b. Clean up tool tip color/style.
 //  5. Refactor code so there is less redundant code!
 //  6. Update readme
 
@@ -226,12 +229,38 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
     .enter()
     .append("circle")
     .classed("stateCircle", true)  // Todo: move to a separate element grouped with circle.
-    .text(d => d.abbr)
+    // .text(d => d.abbr)
+    // .append("text")
     .attr("cx", d => xLinearScale(d[chosenXAxis]))
     .attr("cy", d => yLinearScale(d[chosenYAxis]))
     .attr("r", 10)
     // .attr("fill", "#89bdd3")  // Todo: Set this up in the .css file instead.
-    .attr("opacity", ".8");
+    .attr("opacity", ".8")
+    .attr("class", function(d) {
+      return "stateCircle " + d.abbr;
+    })
+
+  circlesGroup
+    .append("text")
+    // .text(function(d) {
+    //   return d.abbr;
+    // })
+    .text(d => d.abbr)
+    .attr("dx", function(d) {
+      return d[chosenXAxis];
+    })
+    .attr("dy", function(d) {
+      return d[chosenYAxis] + 10/2.5;
+    })
+    .attr("font-size", 10)
+    .attr("class", "stateText");
+
+
+  
+
+
+
+
 
   // Create group for  3 x- axis labels
   var xLabelsGroup = chartGroup.append("g")
