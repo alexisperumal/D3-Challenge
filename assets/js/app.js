@@ -1,53 +1,25 @@
 // UCSD Data Science Bootcamp, HW16 D3
 // Alexis Perumal, 3/22/20
 
-// Old code:
-    // @TODO: YOUR CODE HERE!
-    // var svgWidth = 1000;
-    // var svgHeight = 500;
-
-
-    // //From Kevin, 3/23/20 - START
-
-    // // add before svg
-    // // Grab the width of the containing box
-    // var width = parseInt(d3.select("#scatter").style("width"));
-    // // Designate the height of the graph
-    // var height = width - width / 3.9;
-    // // Margin spacing for graph
-    // var margin = 20;
-    // // space for placing words
-    // var labelArea = 110;
-    // // padding for the text at the bottom and left axes
-    // var tPadBot = 40;
-    // var tPadLeft = 40;
-
-    // //From Kevin, 3/23/20 - END
-
-
-
-    // // create an SVG element
-    // var svg = d3
-    //   .select("#scatter")
-    //   .append("svg")
-    //   .attr("width", width)
-    //   .attr("height", height)
-    //   .attr("class", "chart")
-
-
-
-
-// ToDo: 
-//  1. Add 2-letter state abbreviations as a label.
+// ToDo in Priority Order: 
+//  1. Fix bug where only states KY-WY have IDs that appear.
+//  2. Add y-value to tool tip label
+//  3. Clean up tool tip color/style.
+//  4. Clean up state ID color/style.
+//  5. Fix bug where state ID blocks the hover tooltip from appearing.
+//  6. Update readme
+//  7. Confirm calculatin for y-axis label location (low priority because it is working without issue)
+//  8. Refactor code so there is less redundant code!
+//
+//
+// DONE
+//  1. Add 2-letter state abbreviations as a label. - DONE
 //       See: https://stackoverflow.com/questions/13615381/d3-add-text-to-circle
+//       Used: http://bl.ocks.org/ChrisJamesC/4474971
 //  2. Fix y-axis label locations to be variable, not fixed. - DONE
 //  3. Fix the y-axis itself to be positioned correctly, with data plotted correctly. - DONE
-//  3a. Confirm calculatin for y-axis label location
-//  4. Add y-value to tool tip label
-//  4a. Fix tool tip bug where wrong data dimension is shown
-//  4b. Clean up tool tip color/style.
-//  5. Refactor code so there is less redundant code!
-//  6. Update readme
+//  4. Fix tool tip bug where wrong data dimension is shown - DONE
+//  5.  Fix bug where moving IDs keep the selected axis variable from being highlighted. - DONE
 
 
 // Derived from Hair app.js (D3-Day03-Activity 12)
@@ -139,7 +111,7 @@ function renderStateIds(stateIdsGroup, newXScale, chosenXAxis, newYScale, chosen
     .duration(1000)
     .attr("dx", d => newXScale(d[chosenXAxis]))
     .attr("dy", d => newYScale(d[chosenYAxis]-0.22));
-  return circlesGroup;
+  return stateIdsGroup;
 }
 
 // Todo: Insert function updateToolTip()
@@ -233,6 +205,10 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
     .attr("transform", `translate(0, 0)`)
     .call(leftAxis);
 
+  console.log('stateData', stateData);
+
+ 
+
   // append initial circles
   var circlesGroup = chartGroup.selectAll("circle")
     .data(stateData)
@@ -249,18 +225,23 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
     .attr("opacity", ".8")
     .attr("class", d => ("stateCircle " + d.abbr));
 
+  console.log('stateData', stateData);
+
   var stateIdGroup = chartGroup.selectAll("text")
     .data(stateData)
     .enter()
     .append("text")
     .text(d => d.abbr)
+    // .text(d => {d.abbr; console.log('d.abbr', d.abbr);})
     .attr("dx", d => xLinearScale(d[chosenXAxis]))
     .attr("dy", d => yLinearScale(d[chosenYAxis]))
-    // .attr("dx", 0)
-    // .attr("dy", 0)
     .attr("font-size", 10)
     .attr("r", 10)
+    // .attr("class", d => ("stateText " + d.abbr));
     .attr("class", "stateText");
+
+
+  console.log('stateData', stateData);
 
   // Create group for  3 x- axis labels
   var xLabelsGroup = chartGroup.append("g")
@@ -425,7 +406,7 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
         yLinearScale, chosenYAxis);
 
       // updates tooltips with new info
-      circlesGroup = updateToolTip(chosenYAxis, circlesGroup);
+      circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
 
       // changes classes to change bold text
       if (chosenYAxis === "obesity") {
