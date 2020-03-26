@@ -2,13 +2,9 @@
 // Alexis Perumal, 3/22/20
 
 // ToDo in Priority Order: 
-//  2. Add y-value to tool tip label
-//  3. Clean up tool tip color/style.
-//  4. Clean up state ID color/style.
-//  5. Fix bug where state ID blocks the hover tooltip from appearing.
-//  6. Update readme
-//  7. Confirm calculation for y-axis label location (low priority because it is working without issue)
-//  8. Refactor code so there is less redundant code!
+//  1. Add circle border on hover. - Not done.
+//     See: https://stackoverflow.com/questions/51168981/d3-how-to-add-border-to-a-circle-on-an-if-condition
+//  2. Update readme - in progress.
 //
 //
 // DONE
@@ -19,7 +15,13 @@
 //  3. Fix the y-axis itself to be positioned correctly, with data plotted correctly. - DONE
 //  4. Fix tool tip bug where wrong data dimension is shown - DONE
 //  5.  Fix bug where moving IDs keep the selected axis variable from being highlighted. - DONE
-//  1. Fix bug where only states KY-WY have IDs that appear. - DONE
+//  6. Fix bug where only states KY-WY have IDs that appear. - DONE
+//  7. Clean up tool tip color/style. - DONE
+//  8. Clean up state ID color/style. - DONE
+//  9. Fix bug where state ID blocks the hover tooltip from appearing. - DEFER
+//  10. Add y-value to tool tip label. - DONE
+//  11. Confirm calculation for y-axis label location (low priority because it is working without issue) - DEFER
+//  12. Refactor code so there is less redundant code! - DEFER
 
 
 // Derived from Hair app.js (D3-Day03-Activity 12)
@@ -116,22 +118,32 @@ function renderStateIds(stateIdsGroup, newXScale, chosenXAxis, newYScale, chosen
 
 // Todo: Insert function updateToolTip()
 // function used for updating circles group with new tooltip
-function updateToolTip(chosenXAxis, circlesGroup) {
+function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
   var label;
 
   if (chosenXAxis === "poverty") {
-    label = "In Poverty %:";
+    labelX = "Poverty (%):";
   } else if (chosenXAxis === "age") {
-    label = "Age (Median):";
+    labelX = "Age (Median):";
   } else {
-    label = "Household Income (Median):";
+    labelX = "Household Income (Median):";
+  }
+
+  // var chosenYAxis = "obesity";  // other options: smokes, healthcare
+
+  if (chosenYAxis === "obesity") {
+    labelY = "Obese (%):";
+  } else if (chosenYAxis === "smokes") {
+    labelY = "Smokes (%):";
+  } else {  // implies healthcare
+    labelY = "Lacks Healthcare (%):";
   }
 
   var toolTip = d3.tip()
     .attr("class", "tooltip")
     .offset([80, -60])
     .html(function(d) {
-      return (`${d.state}<br>${label} ${d[chosenXAxis]}`);
+      return (`<strong>${d.state}</strong><br>${labelX} ${d[chosenXAxis]}<br>${labelY} ${d[chosenYAxis]}`);
     });
 
   circlesGroup.call(toolTip);
@@ -205,44 +217,10 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
     .attr("transform", `translate(0, 0)`)
     .call(leftAxis);
 
-  console.log('stateData', stateData);
+  // console.log('stateData', stateData);
 
  
-
   // append initial circles
-
-  // To debug issue with some state ID's not showing, see
-  // https://stackoverflow.com/questions/49882951/labels-for-circles-not-showing-up-in-d3-data-visualization
-
-// // 3/25/20: New Attempt, with help from Kevin Nguyen.
-//   var circlesGroup = chartGroup.selectAll("circle")
-//     .data(stateData)
-//     .enter();
-
-//   circlesGroup
-//     .append("circle")
-//     .classed("stateCircle", true)  // Todo: move to a separate element grouped with circle.
-//     .attr("cx", d => xLinearScale(d[chosenXAxis]))
-//     .attr("cy", d => yLinearScale(d[chosenYAxis]+0.22))
-//     .attr("r", 10)
-//     .attr("opacity", ".8")
-//     .attr("class", d => ("stateCircle " + d.abbr));
-
-//   console.log('stateData', stateData);
-
-//   circlesGroup
-//     .append("text")
-//     .text(d => d.abbr)
-//     // .text(d => {d.abbr; console.log('d.abbr', d.abbr);})
-//     .attr("dx", d => xLinearScale(d[chosenXAxis]))
-//     .attr("dy", d => yLinearScale(d[chosenYAxis]))
-//     .attr("font-size", 10)
-//     .attr("r", 10)
-//     // .attr("class", d => ("stateText " + d.abbr));
-//     .attr("class", "stateText");
-
-
-  // Earlier attempt
   var circlesGroup = chartGroup.selectAll("circle")
     .data(stateData)
     .enter()
@@ -260,6 +238,7 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
 
   console.log('stateData', stateData);
 
+  // Help from Grant who said that "text" has a limit and can't hold all the data.
   // var stateIdGroup = chartGroup.selectAll("text")
   var stateIdGroup = chartGroup.selectAll(null)
     .data(stateData)
@@ -344,7 +323,7 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
   //   .text("Obese (%)");
 
   // updateToolTip function above csv import
-  var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+  var circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
 
   // x axis labels event listener
   xLabelsGroup.selectAll("text")
@@ -373,7 +352,7 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
         yLinearScale, chosenYAxis);
 
       // updates tooltips with new info
-      circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+      circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
 
       // changes classes to change bold text
       if (chosenXAxis === "poverty") {
@@ -439,7 +418,7 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
         yLinearScale, chosenYAxis);
 
       // updates tooltips with new info
-      circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+      circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
 
       // changes classes to change bold text
       if (chosenYAxis === "obesity") {
