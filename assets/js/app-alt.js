@@ -214,55 +214,23 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
   // To debug issue with some state ID's not showing, see
   // https://stackoverflow.com/questions/49882951/labels-for-circles-not-showing-up-in-d3-data-visualization
 
-// // 3/25/20: New Attempt, with help from Kevin Nguyen.
-//   var circlesGroup = chartGroup.selectAll("circle")
-//     .data(stateData)
-//     .enter();
-
-//   circlesGroup
-//     .append("circle")
-//     .classed("stateCircle", true)  // Todo: move to a separate element grouped with circle.
-//     .attr("cx", d => xLinearScale(d[chosenXAxis]))
-//     .attr("cy", d => yLinearScale(d[chosenYAxis]+0.22))
-//     .attr("r", 10)
-//     .attr("opacity", ".8")
-//     .attr("class", d => ("stateCircle " + d.abbr));
-
-//   console.log('stateData', stateData);
-
-//   circlesGroup
-//     .append("text")
-//     .text(d => d.abbr)
-//     // .text(d => {d.abbr; console.log('d.abbr', d.abbr);})
-//     .attr("dx", d => xLinearScale(d[chosenXAxis]))
-//     .attr("dy", d => yLinearScale(d[chosenYAxis]))
-//     .attr("font-size", 10)
-//     .attr("r", 10)
-//     // .attr("class", d => ("stateText " + d.abbr));
-//     .attr("class", "stateText");
-
-
-  // Earlier attempt
+// New Attempt, with help from Kevin Nguyen.
   var circlesGroup = chartGroup.selectAll("circle")
     .data(stateData)
-    .enter()
+    .enter();
+
+  circlesGroup
     .append("circle")
     .classed("stateCircle", true)  // Todo: move to a separate element grouped with circle.
-    // .text(d => d.abbr)
-    // .append("text")
     .attr("cx", d => xLinearScale(d[chosenXAxis]))
     .attr("cy", d => yLinearScale(d[chosenYAxis]+0.22))
     .attr("r", 10)
-    // .attr("fill", "#89bdd3")  // Todo: Set this up in the .css file instead.
-    // .attr("fill", "green")  // Todo: Set this up in the .css file instead.
     .attr("opacity", ".8")
     .attr("class", d => ("stateCircle " + d.abbr));
 
   console.log('stateData', stateData);
 
-  var stateIdGroup = chartGroup.selectAll("text")
-    .data(stateData)
-    .enter()
+  circlesGroup
     .append("text")
     .text(d => d.abbr)
     // .text(d => {d.abbr; console.log('d.abbr', d.abbr);})
@@ -272,6 +240,38 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
     .attr("r", 10)
     // .attr("class", d => ("stateText " + d.abbr));
     .attr("class", "stateText");
+
+
+  // // Earlier attempt
+  // var circlesGroup = chartGroup.selectAll("circle")
+  //   .data(stateData)
+  //   .enter()
+  //   .append("circle")
+  //   .classed("stateCircle", true)  // Todo: move to a separate element grouped with circle.
+  //   // .text(d => d.abbr)
+  //   // .append("text")
+  //   .attr("cx", d => xLinearScale(d[chosenXAxis]))
+  //   .attr("cy", d => yLinearScale(d[chosenYAxis]+0.22))
+  //   .attr("r", 10)
+  //   // .attr("fill", "#89bdd3")  // Todo: Set this up in the .css file instead.
+  //   // .attr("fill", "green")  // Todo: Set this up in the .css file instead.
+  //   .attr("opacity", ".8")
+  //   .attr("class", d => ("stateCircle " + d.abbr));
+
+  // console.log('stateData', stateData);
+
+  // var stateIdGroup = chartGroup.selectAll("text")
+  //   .data(stateData)
+  //   .enter()
+  //   .append("text")
+  //   .text(d => d.abbr)
+  //   // .text(d => {d.abbr; console.log('d.abbr', d.abbr);})
+  //   .attr("dx", d => xLinearScale(d[chosenXAxis]))
+  //   .attr("dy", d => yLinearScale(d[chosenYAxis]))
+  //   .attr("font-size", 10)
+  //   .attr("r", 10)
+  //   // .attr("class", d => ("stateText " + d.abbr));
+  //   .attr("class", "stateText");
 
 
   console.log('stateData', stateData);
@@ -369,8 +369,8 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
       circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis,
         yLinearScale, chosenYAxis);
 
-      stateIdGroup = renderStateIds(stateIdGroup, xLinearScale, chosenXAxis,
-        yLinearScale, chosenYAxis);
+      // stateIdGroup = renderStateIds(stateIdGroup, xLinearScale, chosenXAxis,
+      //   yLinearScale, chosenYAxis);
 
       // updates tooltips with new info
       circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
@@ -435,8 +435,8 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
       circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis,
         yLinearScale, chosenYAxis);
 
-      stateIdGroup = renderStateIds(stateIdGroup, xLinearScale, chosenXAxis,
-        yLinearScale, chosenYAxis);
+      // stateIdGroup = renderStateIds(stateIdGroup, xLinearScale, chosenXAxis,
+      //   yLinearScale, chosenYAxis);
 
       // updates tooltips with new info
       circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
