@@ -2,13 +2,12 @@
 // Alexis Perumal, 3/22/20
 
 // ToDo in Priority Order: 
-//  1. Fix bug where only states KY-WY have IDs that appear.
 //  2. Add y-value to tool tip label
 //  3. Clean up tool tip color/style.
 //  4. Clean up state ID color/style.
 //  5. Fix bug where state ID blocks the hover tooltip from appearing.
 //  6. Update readme
-//  7. Confirm calculatin for y-axis label location (low priority because it is working without issue)
+//  7. Confirm calculation for y-axis label location (low priority because it is working without issue)
 //  8. Refactor code so there is less redundant code!
 //
 //
@@ -20,6 +19,7 @@
 //  3. Fix the y-axis itself to be positioned correctly, with data plotted correctly. - DONE
 //  4. Fix tool tip bug where wrong data dimension is shown - DONE
 //  5.  Fix bug where moving IDs keep the selected axis variable from being highlighted. - DONE
+//  1. Fix bug where only states KY-WY have IDs that appear. - DONE
 
 
 // Derived from Hair app.js (D3-Day03-Activity 12)
@@ -273,7 +273,6 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
     .attr("r", 10)
     // .attr("class", d => ("stateText " + d.abbr));
     .attr("class", "stateText");
-
 
   console.log('stateData', stateData);
 
