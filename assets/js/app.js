@@ -260,7 +260,8 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
 
   console.log('stateData', stateData);
 
-  var stateIdGroup = chartGroup.selectAll("text")
+  // var stateIdGroup = chartGroup.selectAll("text")
+  var stateIdGroup = chartGroup.selectAll(null)
     .data(stateData)
     .enter()
     .append("text")
