@@ -2,10 +2,6 @@
 // Alexis Perumal, 3/22/20
 
 // ToDo in Priority Order: 
-//  1. Add circle border on hover. - Not done.
-//     See: https://stackoverflow.com/questions/51168981/d3-how-to-add-border-to-a-circle-on-an-if-condition
-//  2. Update readme - in progress.
-//
 //
 // DONE
 //  1. Add 2-letter state abbreviations as a label. - DONE
@@ -22,7 +18,9 @@
 //  10. Add y-value to tool tip label. - DONE
 //  11. Confirm calculation for y-axis label location (low priority because it is working without issue) - DEFER
 //  12. Refactor code so there is less redundant code! - DEFER
-
+//  13. Add circle border on hover. - DONE, with Kevin's help.
+//     See: https://stackoverflow.com/questions/51168981/d3-how-to-add-border-to-a-circle-on-an-if-condition
+//  14. Update readme - DONE
 
 // Derived from Hair app.js (D3-Day03-Activity 12)
 var svgWidth = 960;
@@ -116,54 +114,85 @@ function renderStateIds(stateIdsGroup, newXScale, chosenXAxis, newYScale, chosen
   return stateIdsGroup;
 }
 
-// Todo: Insert function updateToolTip()
-// function used for updating circles group with new tooltip
-function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
-  var label;
+// // Todo: Insert function updateToolTip()
+// // function used for updating circles group with new tooltip
+// function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
+//   var label;
 
-  if (chosenXAxis === "poverty") {
-    labelX = "Poverty (%):";
-  } else if (chosenXAxis === "age") {
-    labelX = "Age (Median):";
-  } else {
-    labelX = "Household Income (Median):";
-  }
+//   if (chosenXAxis === "poverty") {
+//     labelX = "Poverty (%):";
+//   } else if (chosenXAxis === "age") {
+//     labelX = "Age (Median):";
+//   } else {
+//     labelX = "Household Income (Median):";
+//   }
 
-  // var chosenYAxis = "obesity";  // other options: smokes, healthcare
+//   // var chosenYAxis = "obesity";  // other options: smokes, healthcare
 
-  if (chosenYAxis === "obesity") {
-    labelY = "Obese (%):";
-  } else if (chosenYAxis === "smokes") {
-    labelY = "Smokes (%):";
-  } else {  // implies healthcare
-    labelY = "Lacks Healthcare (%):";
-  }
+//   if (chosenYAxis === "obesity") {
+//     labelY = "Obese (%):";
+//   } else if (chosenYAxis === "smokes") {
+//     labelY = "Smokes (%):";
+//   } else {  // implies healthcare
+//     labelY = "Lacks Healthcare (%):";
+//   }
 
-  var toolTip = d3.tip()
-    .attr("class", "tooltip")
-    .offset([80, -60])
-    .html(function(d) {
-      return (`<strong>${d.state}</strong><br>${labelX} ${d[chosenXAxis]}<br>${labelY} ${d[chosenYAxis]}`);
-    });
+//   var toolTip = d3.tip()
+//     .attr("class", "tooltip")
+//     .offset([80, -60])
+//     .html(function(d) {
+//       return (`<strong>${d.state}</strong><br>${labelX} ${d[chosenXAxis]}<br>${labelY} ${d[chosenYAxis]}`);
+//     });
 
-  circlesGroup.call(toolTip);
+//   circlesGroup.call(toolTip);
 
-  circlesGroup.on("mouseover", function(data) {
-    toolTip.show(data);
-  })
-    // onmouseout event
-    .on("mouseout", function(data, index) {
-      toolTip.hide(data);
-    });
+//   circlesGroup.on("mouseover", function(data) {
+//     toolTip.show(data);
+//   })
+//     // onmouseout event
+//     .on("mouseout", function(data, index) {
+//       toolTip.hide(data);
+//     });
 
-  return circlesGroup;
-}
+//   return circlesGroup;
+// }
+
+
 
 // Load csv data
 d3.csv("assets/data/data.csv").then(function(stateData, err) {
   if (err) throw err;
 
-  // console.log(stateData);
+  var toolTip = d3
+    .tip()
+    .attr("class", "d3-tip")
+    .offset([40, -60])
+    .html(function(d) {
+        // x key
+        var theX;
+        // Grab the state name.
+        var theState = "<div><strong>" + d.state + "</strong></div>";
+        // Snatch the y value's key and value.
+        var theY = "<div>" + chosenYAxis + ": " + d[chosenYAxis] + "%</div>";
+        // If the x key is poverty
+        if (chosenXAxis === "poverty") {
+            // Grab the x key and a version of the value formatted to show percentage
+            theX = "<div>" + chosenXAxis + ": " + d[chosenXAxis] + "%</div>";
+        } else {
+            // Otherwise
+            // Grab the x key and a version of the value formatted to include commas after every third digit.
+            theX = "<div>" +
+                chosenXAxis +
+                ": " +
+                parseFloat(d[chosenXAxis]).toLocaleString("en") +
+                "</div>";
+        }
+        // Display what we capture.
+        return theState + theX + theY;
+    });
+
+  // Call the toolTip function.
+  svg.call(toolTip);
 
   // cast the data from the csv as numbers
   stateData.forEach(function(data) {
@@ -198,8 +227,6 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
   // Create initial axis functions
   var bottomAxis = d3.axisBottom(xLinearScale);
   var leftAxis = d3.axisLeft(yLinearScale);
-  // console.log('xLinearScale', xLinearScale);
-  // console.log('yLinearScale', yLinearScale);
 
   // append x axis
   var xAxis = chartGroup.append("g")
@@ -208,18 +235,11 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
     .call(bottomAxis);
 
   // append y axis
-  // chartGroup.append("g")
-  //   .call(leftAxis);
-
-  // append y axis
   var yAxis = chartGroup.append("g")
     .classed("y-axis", true)
     .attr("transform", `translate(0, 0)`)
     .call(leftAxis);
 
-  // console.log('stateData', stateData);
-
- 
   // append initial circles
   var circlesGroup = chartGroup.selectAll("circle")
     .data(stateData)
@@ -234,9 +254,21 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
     // .attr("fill", "#89bdd3")  // Todo: Set this up in the .css file instead.
     // .attr("fill", "green")  // Todo: Set this up in the .css file instead.
     .attr("opacity", ".8")
-    .attr("class", d => ("stateCircle " + d.abbr));
-
-  console.log('stateData', stateData);
+    .attr("class", d => ("stateCircle " + d.abbr))
+    // From Kevin, 3/26/20
+    // Hover rules
+    .on("mouseover", function(d) {
+      // Show the tooltip
+      toolTip.show(d, this);
+      // Highlight the state circle's border
+      d3.select(this).style("stroke", "#323232");
+    })
+    .on("mouseout", function(d) {
+        // Remove the tooltip
+        toolTip.hide(d);
+        // Remove highlight
+        d3.select(this).style("stroke", "#e3e3e3");
+    });
 
   // Help from Grant who said that "text" has a limit and can't hold all the data.
   // var stateIdGroup = chartGroup.selectAll("text")
@@ -245,15 +277,26 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
     .enter()
     .append("text")
     .text(d => d.abbr)
-    // .text(d => {d.abbr; console.log('d.abbr', d.abbr);})
     .attr("dx", d => xLinearScale(d[chosenXAxis]))
     .attr("dy", d => yLinearScale(d[chosenYAxis]))
     .attr("font-size", 10)
     .attr("r", 10)
     // .attr("class", d => ("stateText " + d.abbr));
-    .attr("class", "stateText");
-
-  console.log('stateData', stateData);
+    .attr("class", "stateText")
+    // From Kevin, 3/26/20
+    // Hover Rules
+    .on("mouseover", function(d) {
+      // Show the tooltip
+      toolTip.show(d);
+      // Highlight the state circle's border
+      d3.select("." + d.abbr).style("stroke", "#323232");
+    })
+    .on("mouseout", function(d) {
+        // Remove tooltip
+        toolTip.hide(d);
+        // Remove highlight
+        d3.select("." + d.abbr).style("stroke", "#e3e3e3");
+    });
 
   // Create group for  3 x- axis labels
   var xLabelsGroup = chartGroup.append("g")
@@ -313,17 +356,9 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
     .classed("inactive", true)
     .text("Lacks Healthcare (%)");
 
-  // // append y axis
-  // chartGroup.append("text")
-  //   .attr("transform", "rotate(-90)")
-  //   .attr("y", 0 - margin.left)
-  //   .attr("x", 0 - (height / 2))
-  //   .attr("dy", "1em")
-  //   .classed("axis-text", true)
-  //   .text("Obese (%)");
-
   // updateToolTip function above csv import
-  var circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
+  // Refactored tooltips with Kevin on 3/26/20. Don't need this anymore.
+  //var circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
 
   // x axis labels event listener
   xLabelsGroup.selectAll("text")
@@ -334,8 +369,6 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
 
       // replaces chosenXAxis with value
       chosenXAxis = value;
-
-      // console.log(chosenXAxis)
 
       // functions here found above csv import
       // updates x scale for new data
@@ -352,7 +385,8 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
         yLinearScale, chosenYAxis);
 
       // updates tooltips with new info
-      circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
+      // Refactored with Kevin 3/26/20. Don't need.
+      //circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
 
       // changes classes to change bold text
       if (chosenXAxis === "poverty") {
@@ -398,10 +432,6 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
 
       // replaces chosenXAxis with value
       chosenYAxis = value;
-      // console.log('chosenYAxis', chosenYAxis);
-      // console.log('chosenXAxis', chosenXAxis);
-
-      // console.log(chosenXAxis)
 
       // functions here found above csv import
       // updates x scale for new data
@@ -418,7 +448,8 @@ d3.csv("assets/data/data.csv").then(function(stateData, err) {
         yLinearScale, chosenYAxis);
 
       // updates tooltips with new info
-      circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
+      // Refactored. Don't need.
+      // circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
 
       // changes classes to change bold text
       if (chosenYAxis === "obesity") {
